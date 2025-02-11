@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "./Header";
-import BottomNavBar from "./BottomNavBar";
+import Header from "../components/Header";
+import BottomNavBar from "../components/BottomNavBar";
 
 const HomeScreen = ({ navigation }) => {
   const boxes = [
@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Header height="25%" />
-      <View style={styles.userInfoBox}>
+      <View style={[styles.userInfoBox]}>
         <Ionicons
           style={styles.userIcon}
           name="person-circle-outline"
@@ -41,7 +41,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-      <BottomNavBar navigation={navigation} />
+      <BottomNavBar navigation={navigation} style={styles.bottomNavBar} />
     </View>
   );
 };
