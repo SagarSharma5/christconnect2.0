@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "./Header"; // Importing Header component
-import BottomNavBar from "./BottomNavBar"; // Importing BottomNavBar component
+import Header from "./Header";
+import BottomNavBar from "./BottomNavBar";
 
 const HomeScreen = ({ navigation }) => {
   const boxes = [
@@ -18,8 +18,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header /> {/* Rendering Header */}
-      {/* User Info Box */}
+      <Header height="25%" />
       <View style={styles.userInfoBox}>
         <Ionicons
           style={styles.userIcon}
@@ -27,11 +26,9 @@ const HomeScreen = ({ navigation }) => {
           size={80}
           color="darkblue"
         />
-        <Text style={styles.userName}>Sagar Sharma</Text>{" "}
-        {/* Wrapped in Text */}
-        <Text style={styles.userId}>2447245</Text> {/* Wrapped in Text */}
+        <Text style={styles.userName}>Sagar Sharma</Text>
+        <Text style={styles.userId}>2447245</Text>
       </View>
-      {/* Boxes */}
       <View style={styles.boxContainer}>
         {boxes.map((box, index) => (
           <TouchableOpacity
@@ -44,33 +41,32 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-      <BottomNavBar navigation={navigation} /> {/* Rendering BottomNavBar */}
+      <BottomNavBar navigation={navigation} />
     </View>
   );
 };
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f8", // Very light gray/off-white color
+    backgroundColor: "#f8f8f8",
     alignItems: "center",
-    justifyContent: "flex-start", // Changed to flex-start to accommodate Header
+    justifyContent: "flex-start",
   },
   userInfoBox: {
     justifyContent: "center",
     height: "20%",
-    width: "75%", // Reduced width
+    width: "75%",
     padding: 20,
-    backgroundColor: "white", // Set to white
+    backgroundColor: "white",
     borderRadius: 10,
-    elevation: 2, // Dark blue border color
+    elevation: 2,
     shadowColor: "black",
-    shadowOffset: { width: 5, height: 5 }, // Increased shadow offset for more raised effect
-    shadowOpacity: 0.5, // Increased opacity for more pronounced effect
-    shadowRadius: 10, // Increased radius for more pronounced effect
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
     alignItems: "center",
-    marginTop: 110, // Added margin to create space below the header
+    marginTop: 110,
     marginBottom: 80,
   },
   userName: {
@@ -85,18 +81,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    alignItems: "center", // Centering boxes vertically
-    flex: 1, // Allowing the box container to take available space
+    alignItems: "center",
+    flex: 1,
   },
   box: {
     width: 160,
     height: 120,
-    backgroundColor: "white", // White color for boxes
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
     margin: 10,
-    elevation: 5, // Increased raised effect
+    elevation: 5,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
