@@ -19,22 +19,22 @@ const AcademicScreen = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const url =
+      const baseUrl =
         activeTab === "Information"
           ? "http://localhost:3000/classroom/courses/recentAnnouncements"
           : "http://localhost:3000/classroom/courses/recentCourseworks";
-  
-      const accessToken =
-        "ya29.a0AXeO80RyUVf0oyH2AX6aTiNEpxKuVBhA_dEAA6kK3YQ9axCq5TMK0f1FgT2X5ThlrA4kn-Rx3SRzRO-b0srq-pfrW1Ql1ixDHVbvmCBBcFidfZMAbupn5iNGfbyu1BWglM-94HnPwYvVfVQ0F55sZiCRTONjllKxXwli7EaZFjr1PDfyknm1Zc_vheAaCgYKATUSARESFQHGX2Mici9lfqLQQQvGahZTOWb0gA0194";
-  
-      const response = await axios.get(
-        url,
-        new URLSearchParams({ accessToken }).toString(),
-        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-      );
 
-      console.log("Response:", response.data);
-  
+      const accessToken =
+        "ya29.a0AXeO80QBE5TRHy0BmBJ4O9BChch07sPg3vLS2VTzvFkJkNp7-2OekSRd9eRSqxx6e6U9z9TVCaBQ3sq5qJpjssy0Xj2kTrHwq-DV8lkVHvWgNf1kJxxSxDskXvl8VoT31ZUa_WkAMqW4zvYCArehRrGke02fFpV7plBDQI_SAqm3bCyktN576fk6u4IaCgYKAaYSARESFQHGX2MiiUQRXO85yqHoN1HyiifvWQ0194";
+
+      // Send accessToken as x-www-form-urlencoded in headers
+      const response = await axios.get(baseUrl, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
       const now = new Date();
       const formattedData = response.data.slice(0, 10).map((item, index) => {
         const publishedDate = new Date(now.getTime() - index * 86400000); // Simulate past dates
@@ -47,14 +47,14 @@ const AcademicScreen = ({ navigation }) => {
           text: item.description || item.body || "No description available.",
         };
       });
-  
+
       setData(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   useEffect(() => {
     fetchData();
