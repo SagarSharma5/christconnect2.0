@@ -19,28 +19,42 @@ const AcademicScreen = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
+      const url =
+        activeTab === "Information"
+          ? "http://localhost:3000/classroom/courses/recentAnnouncements"
+          : "http://localhost:3000/classroom/courses/recentCourseworks";
+  
+      const accessToken =
+        "ya29.a0AXeO80RyUVf0oyH2AX6aTiNEpxKuVBhA_dEAA6kK3YQ9axCq5TMK0f1FgT2X5ThlrA4kn-Rx3SRzRO-b0srq-pfrW1Ql1ixDHVbvmCBBcFidfZMAbupn5iNGfbyu1BWglM-94HnPwYvVfVQ0F55sZiCRTONjllKxXwli7EaZFjr1PDfyknm1Zc_vheAaCgYKATUSARESFQHGX2Mici9lfqLQQQvGahZTOWb0gA0194";
+  
       const response = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
+        url,
+        new URLSearchParams({ accessToken }).toString(),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
+
+      console.log("Response:", response.data);
+  
       const now = new Date();
       const formattedData = response.data.slice(0, 10).map((item, index) => {
         const publishedDate = new Date(now.getTime() - index * 86400000); // Simulate past dates
         const dueDate = new Date(now.getTime() + (index + 1) * 86400000); // Simulate future dates
         return {
           id: item.id.toString(),
-          courseName: `Course ${index + 1}`,
+          courseName: item.courseName || `Course ${index + 1}`,
           publishedDate: publishedDate.toDateString(),
           dueDate: dueDate,
-          text: item.body,
+          text: item.description || item.body || "No description available.",
         };
       });
+  
       setData(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   useEffect(() => {
     fetchData();
