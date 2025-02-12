@@ -19,32 +19,22 @@ const AcademicScreen = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const url =
-        activeTab === "Information"
-          ? "http://localhost:3000/classroom/courses/recentAnnouncements"
-          : "http://localhost:3000/classroom/courses/recentCourseworks";
-  
+      
       const accessToken =
-        "ya29.a0AXeO80RyUVf0oyH2AX6aTiNEpxKuVBhA_dEAA6kK3YQ9axCq5TMK0f1FgT2X5ThlrA4kn-Rx3SRzRO-b0srq-pfrW1Ql1ixDHVbvmCBBcFidfZMAbupn5iNGfbyu1BWglM-94HnPwYvVfVQ0F55sZiCRTONjllKxXwli7EaZFjr1PDfyknm1Zc_vheAaCgYKATUSARESFQHGX2Mici9lfqLQQQvGahZTOWb0gA0194";
-  
-      const response = await axios.get(
-        url,
-        new URLSearchParams({ accessToken }).toString(),
-        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-      );
-
-      console.log("Response:", response.data);
-  
-      const now = new Date();
-      const formattedData = response.data.slice(0, 10).map((item, index) => {
-        const publishedDate = new Date(now.getTime() - index * 86400000); // Simulate past dates
-        const dueDate = new Date(now.getTime() + (index + 1) * 86400000); // Simulate future dates
+        "ya29.a0AXeO80TPcRFCkNlwaL0INXc1-BTIwTAVWSkR9VunQxDV-1USDqKTsP7O_JLMwXQdyKDkCZDuF2qO4j2UC3yqYfIMl25wCoC8HwuB59wAstlvWuJ3N_jgfSIIdO4BbWEr513u6wjS-21Ndwr4kXMWTTIn04Q_RsGxuzetEDNeAVKTo9nq78ZewsMK4MsaCgYKASsSARESFQHGX2Mi5-3k5VBLR7wKps6GQuPiMA0194";
+      
+        const response = await axios.get(`http://10.0.2.2:3000/test`, {
+          params: { accessToken }, // Passing as a query parameter
+      });
+      console.log("Data fetched successfully:", response.data.coursework);
+      
+      const formattedData = response.data.coursework.map((item) => {
         return {
-          id: item.id.toString(),
-          courseName: item.courseName || `Course ${index + 1}`,
-          publishedDate: publishedDate.toDateString(),
-          dueDate: dueDate,
-          text: item.description || item.body || "No description available.",
+          id: item.id,
+          courseName: item.courseName,
+          publishedDate: item.creationTime,
+          dueDate: item.updateTime,
+          text: item.description,
         };
       });
   
@@ -54,7 +44,8 @@ const AcademicScreen = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
+      
 
   useEffect(() => {
     fetchData();
