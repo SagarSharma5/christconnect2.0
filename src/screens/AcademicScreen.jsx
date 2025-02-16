@@ -85,7 +85,7 @@ const AcademicScreen = ({ navigation }) => {
           text: item?.title ?? item?.text,
         };
       });
-  
+
       setData(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
