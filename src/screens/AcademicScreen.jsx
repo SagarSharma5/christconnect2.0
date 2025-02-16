@@ -20,21 +20,69 @@ const AcademicScreen = ({ navigation }) => {
     setLoading(true);
     try {
       
+      const baseUrl = activeTab === "Information" ? "http://10.0.2.2:3000/classroom/courses/recentAnnouncements" : "http://10.0.2.2:3000/classroom/courses/recentCourseworks";
+
       const accessToken =
-        "ya29.a0AXeO80TPcRFCkNlwaL0INXc1-BTIwTAVWSkR9VunQxDV-1USDqKTsP7O_JLMwXQdyKDkCZDuF2qO4j2UC3yqYfIMl25wCoC8HwuB59wAstlvWuJ3N_jgfSIIdO4BbWEr513u6wjS-21Ndwr4kXMWTTIn04Q_RsGxuzetEDNeAVKTo9nq78ZewsMK4MsaCgYKASsSARESFQHGX2Mi5-3k5VBLR7wKps6GQuPiMA0194";
+        "";
       
-        const response = await axios.get(`http://10.0.2.2:3000/test`, {
-          params: { accessToken }, // Passing as a query parameter
+      const response = await axios.get(baseUrl, {
+          headers: {
+              Authorization: `Bearer ${accessToken}`
+          }
       });
-      console.log("Data fetched successfully:", response.data.coursework);
+
+      // console.log("Data fetched successfully:", response.data.coursework);
+      const finalData = response.data.coursework ?? response.data.announcements; 
       
-      const formattedData = response.data.coursework.map((item) => {
+      const formattedData = finalData.map((item) => {
+        const originalCreationTime = new Date(item.creationTime);
+
+        const formattedCreationTime = originalCreationTime.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        });
+        
+        let finalString = "";
+        if(item?.dueDate) {
+          const dueDate = item?.dueDate;
+          
+          const dueTime = item?.dueTime;
+          
+          // Create a Date object in UTC
+          const utcDate = new Date(Date.UTC(dueDate.year, dueDate.month - 1, dueDate.day, dueTime.hours, dueTime.minutes));
+
+          // Convert UTC to IST by adding 5 hours 30 minutes
+          const istDate = new Date(utcDate.getTime() + (5.5 * 60 * 60 * 1000));
+
+          // Format the date
+          const formattedDate = istDate.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+
+          // Extract IST hours and minutes manually
+          let hours = istDate.getHours();
+          let minutes = istDate.getMinutes();
+          let ampm = hours >= 12 ? "PM" : "AM";
+          hours = hours % 12 || 12; // Convert to 12-hour format
+
+          // Format time string
+          const formattedTime = `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+
+          // Final output
+          finalString = `${formattedDate}, ${formattedTime}`;
+          console.log(finalString);
+        }
+
         return {
           id: item.id,
           courseName: item.courseName,
-          publishedDate: item.creationTime,
-          dueDate: item.updateTime,
-          text: item.description,
+          publishedDate: formattedCreationTime,
+          // dueDate: item?.dueDate,
+          dueTime: finalString === "" ? "No Due Date" : finalString,
+          text: item?.title ?? item?.text,
         };
       });
   
@@ -74,7 +122,7 @@ const AcademicScreen = ({ navigation }) => {
           </Text>
         ) : (
           <Text style={styles.cardSubtitle}>
-            Due: {calculateCountdown(item.dueDate)}
+            Due: {item.dueTime}
           </Text>
         )}
       </View>
@@ -187,6 +235,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
+    alignSelf: "center",
     backgroundColor: "#fff",
     padding: 15,
     marginVertical: 5,
@@ -198,12 +247,12 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   cardHeader: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
     marginBottom: 10,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#003366",
   },
@@ -213,10 +262,12 @@ const styles = StyleSheet.create({
   },
   cardBody: {
     marginBottom: 10,
+    width: "100%"
   },
   cardText: {
     fontSize: 14,
     color: "#333",
+    flexShrink: 1,
   },
   cardButton: {
     alignSelf: "flex-end",
