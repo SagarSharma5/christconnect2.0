@@ -5,8 +5,6 @@ import BottomNavBar from "../components/BottomNavBar";
 
 const AnnouncementScreen = ({ navigation }) => (
   <View style={styles.container}>
-    <Header height="90" />
-
     <View style={styles.content}>
       <Text style={styles.text}>Announcement Screen</Text>
     </View>

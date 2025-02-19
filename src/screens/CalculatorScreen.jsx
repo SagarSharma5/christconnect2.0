@@ -100,8 +100,6 @@ const CalculatorScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header height="90" />
-
       <KeyboardAvoidingView
         style={styles.content}
         behavior={Platform.OS === "ios" ? "padding" : "height"}

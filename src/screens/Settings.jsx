@@ -4,8 +4,6 @@ import Header from "../components/Header";
 
 const Settings = ({ navigation }) => (
   <View style={styles.container}>
-    <Header height="90" />
-
     <View style={styles.content}>
       <Text style={styles.title}>Settings</Text>
     </View>

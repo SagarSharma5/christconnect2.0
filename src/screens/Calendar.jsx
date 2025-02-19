@@ -5,8 +5,6 @@ import Header from "../components/Header";
 const Calendar = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Header height="90" />
-
       <View style={styles.content}>
         <Text style={styles.title}>Calendar</Text>
       </View>

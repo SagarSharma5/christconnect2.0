@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "../components/Header";
-import BottomNavBar from "../components/BottomNavBar";
+import Header from "src/components/Header";
 
 const HomeScreen = ({ navigation }) => {
   const boxes = [
@@ -18,7 +17,6 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header height="25%" />
       <TouchableOpacity
         style={[styles.userInfoBox]}
         onPress={() => navigation.navigate("UserProfile")}
@@ -68,8 +66,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     alignItems: "center",
-    marginTop: 110,
+    marginTop: 100,
     marginBottom: 80,
+    zIndex: 1000,
   },
   userName: {
     fontSize: 22,

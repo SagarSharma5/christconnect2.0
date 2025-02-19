@@ -4,8 +4,6 @@ import Header from "../components/Header";
 
 const UserProfile = ({ navigation }) => (
   <View style={styles.container}>
-    <Header height="90" />
-
     <View style={styles.content}>
       <Text style={styles.title}>User Profile</Text>
     </View>

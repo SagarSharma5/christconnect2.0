@@ -1,8 +1,28 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Keyboard } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const BottomNavBar = ({ navigation }) => {
+  const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  if (isKeyboardVisible) return null; // Hide BottomNavBar when keyboard is open
+
   return (
     <View style={styles.navBar}>
       <TouchableOpacity
@@ -45,6 +65,9 @@ const BottomNavBar = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   navBar: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -52,9 +75,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    width: "100%",
-    position: "fixed",
-    bottom: 0,
     height: 80,
   },
   button: {
@@ -64,7 +84,6 @@ const styles = StyleSheet.create({
     width: 55,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,

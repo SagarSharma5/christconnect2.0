@@ -1,4 +1,5 @@
 import React from "react";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screens/HomeScreen";
 import UserProfile from "../screens/UserProfile";
@@ -8,9 +9,11 @@ import CalculatorScreen from "../screens/CalculatorScreen";
 import Settings from "../screens/Settings";
 import AnnouncementScreen from "../screens/AnnouncementScreen";
 import AcademicScreen from "../screens/AcademicScreen";
-import ScreenWrapper from "../components/ScreenWrapper"; // Wrap screens with Header & BottomBar
+import ScreenWrapper from "../components/ScreenWrapper";
+import CustomDrawer from "../components/CustomDrawer";
 
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const screens = [
   { name: "Home", Component: HomeScreen },
@@ -23,24 +26,37 @@ const screens = [
   { name: "Academics", Component: AcademicScreen },
 ];
 
+const StackNavigator = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    {screens.map(({ name, Component }) => (
+      <Stack.Screen
+        key={name}
+        name={name}
+        component={(props) => (
+          <ScreenWrapper
+            navigation={props.navigation}
+            headerHeight={name === "Home" ? 180 : 90} // Keeps Header
+          >
+            <Component {...props} />
+          </ScreenWrapper>
+        )}
+      />
+    ))}
+  </Stack.Navigator>
+);
+
 const AppNavigator = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="Home"
-      screenOptions={{ headerShown: false }}
+    <Drawer.Navigator
+      screenOptions={{ drawerStyle: { width: "80%" } }}
+      drawerContent={(props) => <CustomDrawer {...props} />}
     >
-      {screens.map(({ name, Component }) => (
-        <Stack.Screen
-          key={name}
-          name={name}
-          component={(props) => (
-            <ScreenWrapper navigation={props.navigation}>
-              <Component {...props} />
-            </ScreenWrapper>
-          )}
-        />
-      ))}
-    </Stack.Navigator>
+      <Drawer.Screen
+        name="MainStack"
+        component={StackNavigator}
+        options={{ headerShown: false }}
+      />
+    </Drawer.Navigator>
   );
 };
 

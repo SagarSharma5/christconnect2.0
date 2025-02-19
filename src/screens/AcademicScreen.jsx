@@ -159,8 +159,6 @@ const AcademicScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header height="90" />
-
       <View>
         {/* Tab Switch */}
         <View style={[styles.tabContainer]}>
