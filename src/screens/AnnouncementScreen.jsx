@@ -10,8 +10,6 @@ const AnnouncementScreen = ({ navigation }) => (
     <View style={styles.content}>
       <Text style={styles.text}>Announcement Screen</Text>
     </View>
-
-    <BottomNavBar navigation={navigation} style={styles.bottomNav} />
   </View>
 );
 

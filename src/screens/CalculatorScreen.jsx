@@ -184,8 +184,6 @@ const CalculatorScreen = ({ navigation }) => {
           ) : null}
         </View>
       </KeyboardAvoidingView>
-
-      <BottomNavBar navigation={navigation} />
     </View>
   );
 };

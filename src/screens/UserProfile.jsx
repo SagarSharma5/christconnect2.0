@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Header from "../components/Header";
-import BottomNavBar from "../components/BottomNavBar";
 
 const UserProfile = ({ navigation }) => (
   <View style={styles.container}>
@@ -10,8 +9,6 @@ const UserProfile = ({ navigation }) => (
     <View style={styles.content}>
       <Text style={styles.title}>User Profile</Text>
     </View>
-
-    <BottomNavBar navigation={navigation} style={styles.bottomNav} />
   </View>
 );
 

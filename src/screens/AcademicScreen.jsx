@@ -19,41 +19,57 @@ const AcademicScreen = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      
-      const baseUrl = activeTab === "Information" ? "http://10.0.2.2:3000/classroom/courses/recentAnnouncements" : "http://10.0.2.2:3000/classroom/courses/recentCourseworks";
+      const LOCAL_IP = "192.168.102.126"; // Replace with your actual IP
+      const baseUrl =
+        activeTab === "Information"
+          ? `http://${LOCAL_IP}:3000/classroom/courses/recentAnnouncements`
+          : `http://${LOCAL_IP}:3000/classroom/courses/recentCourseworks`;
 
       const accessToken =
-        "";
-      
+        "ya29.a0AXeO80Ry74UaCu21ed-0GGP17QvZMRbUvUz-fslrjdMIozdBTuggcg9kO0u-5quw4nYEejunYS9T9qDTQrjj2YlDK4zsLZkqhvh7fbicw4fzm-a6SITjmLOVOF_svQ3jxWYmM0ian54RmRZuuyQ7faoDkVB1V0Ddf9_QQGosaCgYKATQSARMSFQHGX2MiIKXxwO3a_jA3JbHDPd1tnA0175";
+
       const response = await axios.get(baseUrl, {
-          headers: {
-              Authorization: `Bearer ${accessToken}`
-          }
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       // console.log("Data fetched successfully:", response.data.coursework);
-      const finalData = response.data.coursework ?? response.data.announcements; 
-      
+      const finalData = response.data.coursework ?? response.data.announcements;
+
       const formattedData = finalData.map((item) => {
         const originalCreationTime = new Date(item.creationTime);
 
-        const formattedCreationTime = originalCreationTime.toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        });
-        
+        const formattedCreationTime = originalCreationTime.toLocaleDateString(
+          "en-GB",
+          {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }
+        );
+
         let finalString = "";
-        if(item?.dueDate) {
+        if (item?.dueDate) {
           const dueDate = item?.dueDate;
-          
+
           const dueTime = item?.dueTime;
-          
+
+          console.log(dueDate, dueTime);
+
           // Create a Date object in UTC
-          const utcDate = new Date(Date.UTC(dueDate.year, dueDate.month - 1, dueDate.day, dueTime.hours, dueTime.minutes));
+          const utcDate = new Date(
+            Date.UTC(
+              dueDate.year,
+              dueDate.month - 1,
+              dueDate.day,
+              dueTime.hours,
+              dueTime.minutes
+            )
+          );
 
           // Convert UTC to IST by adding 5 hours 30 minutes
-          const istDate = new Date(utcDate.getTime() + (5.5 * 60 * 60 * 1000));
+          const istDate = new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000);
 
           // Format the date
           const formattedDate = istDate.toLocaleDateString("en-GB", {
@@ -69,11 +85,13 @@ const AcademicScreen = ({ navigation }) => {
           hours = hours % 12 || 12; // Convert to 12-hour format
 
           // Format time string
-          const formattedTime = `${hours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+          const formattedTime = `${hours}:${minutes
+            .toString()
+            .padStart(2, "0")} ${ampm}`;
 
           // Final output
           finalString = `${formattedDate}, ${formattedTime}`;
-          console.log(finalString);
+          // console.log(finalString);
         }
 
         return {
@@ -93,7 +111,6 @@ const AcademicScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
-      
 
   useEffect(() => {
     fetchData();
@@ -121,9 +138,7 @@ const AcademicScreen = ({ navigation }) => {
             Published: {item.publishedDate}
           </Text>
         ) : (
-          <Text style={styles.cardSubtitle}>
-            Due: {item.dueTime}
-          </Text>
+          <Text style={styles.cardSubtitle}>Due: {item.dueTime}</Text>
         )}
       </View>
 
@@ -135,7 +150,7 @@ const AcademicScreen = ({ navigation }) => {
       {/* Action Button */}
       <TouchableOpacity
         style={styles.cardButton}
-        onPress={() => navigation.navigate("Home")}
+        onPress={() => navigation.navigate("Calendar")}
       >
         <Text style={styles.cardButtonText}>Set Reminder</Text>
       </TouchableOpacity>
@@ -146,54 +161,57 @@ const AcademicScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Header height="90" />
 
-      {/* Tab Switch */}
-      <View style={[styles.tabContainer]}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "Information" && styles.activeTab]}
-          onPress={() => setActiveTab("Information")}
-        >
-          <Text
+      <View>
+        {/* Tab Switch */}
+        <View style={[styles.tabContainer]}>
+          <TouchableOpacity
             style={[
-              styles.tabText,
-              activeTab === "Information" && styles.activeTabText,
+              styles.tab,
+              activeTab === "Information" && styles.activeTab,
             ]}
+            onPress={() => setActiveTab("Information")}
           >
-            Information
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Information" && styles.activeTabText,
+              ]}
+            >
+              Information
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "Deadlines" && styles.activeTab]}
-          onPress={() => setActiveTab("Deadlines")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "Deadlines" && styles.activeTabText,
-            ]}
+          <TouchableOpacity
+            style={[styles.tab, activeTab === "Deadlines" && styles.activeTab]}
+            onPress={() => setActiveTab("Deadlines")}
           >
-            Deadlines
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Deadlines" && styles.activeTabText,
+              ]}
+            >
+              Deadlines
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Content */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#003366" />
+        ) : (
+          <FlatList
+            contentContainerStyle={{
+              paddingBottom: 80,
+              paddingHorizontal: 10,
+            }}
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </View>
-
-      {/* Content */}
-      {loading ? (
-        <ActivityIndicator size="large" color="#003366" />
-      ) : (
-        <FlatList
-          contentContainerStyle={{
-            paddingBottom: 80,
-            paddingHorizontal: 10,
-          }}
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-      )}
-
       {/* Bottom Navigation Bar */}
-      <BottomNavBar navigation={navigation} />
     </View>
   );
 };
@@ -262,7 +280,7 @@ const styles = StyleSheet.create({
   },
   cardBody: {
     marginBottom: 10,
-    width: "100%"
+    width: "100%",
   },
   cardText: {
     fontSize: 14,

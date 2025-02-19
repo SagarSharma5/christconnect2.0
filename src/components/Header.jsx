@@ -1,19 +1,25 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native"; // ✅ Import this
 
 const Header = ({ height = "15%" }) => {
+  const navigation = useNavigation(); // ✅ Get navigation instance
+
   return (
     <View style={[styles.header, { height }]}>
       <View style={styles.leftContainer}>
         <Ionicons style={styles.icons} name="menu" size={30} color="white" />
-        <Text style={styles.title}>ChristConnect</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Text style={styles.title}>ChristConnect</Text>
+        </TouchableOpacity>
       </View>
       <Ionicons
         style={styles.icons}
-        name="chatbubbles-outline"
+        name="settings"
         size={30}
         color="white"
+        onPress={() => navigation.navigate("Settings")} // ✅ Add navigation
       />
     </View>
   );

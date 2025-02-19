@@ -19,7 +19,10 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Header height="25%" />
-      <View style={[styles.userInfoBox]}>
+      <TouchableOpacity
+        style={[styles.userInfoBox]}
+        onPress={() => navigation.navigate("UserProfile")}
+      >
         <Ionicons
           style={styles.userIcon}
           name="person-circle-outline"
@@ -28,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text style={styles.userName}>Sagar Sharma</Text>
         <Text style={styles.userId}>2447245</Text>
-      </View>
+      </TouchableOpacity>
       <View style={styles.boxContainer}>
         {boxes.map((box, index) => (
           <TouchableOpacity
@@ -41,7 +44,6 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-      <BottomNavBar navigation={navigation} style={styles.bottomNavBar} />
     </View>
   );
 };

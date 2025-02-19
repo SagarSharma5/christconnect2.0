@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Header from "../components/Header";
-import BottomNavBar from "../components/BottomNavBar";
 
 const Calendar = ({ navigation }) => {
   return (
@@ -11,8 +10,6 @@ const Calendar = ({ navigation }) => {
       <View style={styles.content}>
         <Text style={styles.title}>Calendar</Text>
       </View>
-
-      <BottomNavBar navigation={navigation} style={styles.bottomNav} />
     </View>
   );
 };
