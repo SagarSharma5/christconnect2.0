@@ -3,8 +3,9 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import {
 } from "react-native";
 import Header from "../components/Header";
 import BottomNavBar from "../components/BottomNavBar";
+import axios from "node_modules/axios";
 
 const dummyEmails = [
   {
@@ -75,21 +77,24 @@ const EmailScreen = ({ navigation }) => {
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [emails, setEmails] = useState(dummyEmails);
+  const [finalEmails, setFinalEmails] = useState([]);
+  const [paginationData, setPaginationData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const filters = ["All", "Department", "External", "Classroom", "Important"];
 
-  const filteredEmails = emails.filter((email) => {
-    const matchesFilter =
-      selectedFilter === "All" ||
-      (selectedFilter === "Important"
-        ? email.important
-        : email.type === selectedFilter);
-    const matchesSearch =
-      email.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      email.sender.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      email.content.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  // const filteredEmails = finalEmails.filter((email) => {
+  //   const matchesFilter =
+  //     selectedFilter === "All" ||
+  //     (selectedFilter === "Important"
+  //       ? email.important
+  //       : email.type === selectedFilter);
+  //   const matchesSearch =
+  //     email.headers.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     email.headers.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     email.body.toLowerCase().includes(searchQuery.toLowerCase());
+  //   return matchesFilter && matchesSearch;
+  // });
 
   const toggleAccordion = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -103,6 +108,55 @@ const EmailScreen = ({ navigation }) => {
     );
   };
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const LOCAL_IP = ""; // Replace with your actual IP
+      const baseUrl =
+        selectedFilter === "All"
+          ? `http://${LOCAL_IP}:3000/gmail/mails`
+          : selectedFilter === "Department" 
+          ? `http://${LOCAL_IP}:3000/gmail/department`
+          : selectedFilter === "External"
+          ? `http://${LOCAL_IP}:3000/gmail/others`
+          : selectedFilter === "Classroom"
+          ? `http://${LOCAL_IP}:3000/gmail/academic`
+          : ``; // firebase important mails api
+
+      const accessToken = ""; // Google Access Token
+      
+      const response = await axios.get(baseUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (Array.isArray(response.data?.emails)) {
+        setFinalEmails(response.data.emails);
+      } else {
+        console.error('Unexpected data format:', response.data);
+        setFinalEmails([]);
+      }
+      setPaginationData(response.data?.pagination);
+      
+      // console.log(finalEmails);
+    } catch (error) {
+      console.error('Error Fetching Data: ', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const formatReadableDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', options).replace(',', ' -');
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedFilter]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -110,84 +164,88 @@ const EmailScreen = ({ navigation }) => {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
-          <View style={styles.fixedContainer}>
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search emails..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
+          {loading ? (
+            <ActivityIndicator size="large" color="#003366" style={{ flex: 1 }} />
+          ) : (
+            <View style={styles.fixedContainer}>
+              <TextInput
+                style={styles.searchBar}
+                placeholder="Search emails..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.filterContainer}
-              contentContainerStyle={{ alignItems: "center" }}
-            >
-              {filters.map((filter) => (
-                <TouchableOpacity
-                  key={filter}
-                  style={[
-                    styles.filterButton,
-                    selectedFilter === filter && styles.activeFilter,
-                  ]}
-                  onPress={() => setSelectedFilter(filter)}
-                >
-                  <Text
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.filterContainer}
+                contentContainerStyle={{ alignItems: "center" }}
+              >
+                {filters.map((filter) => (
+                  <TouchableOpacity
+                    key={filter}
                     style={[
-                      styles.filterText,
-                      selectedFilter === filter && styles.activeFilterText,
+                      styles.filterButton,
+                      selectedFilter === filter && styles.activeFilter,
                     ]}
+                    onPress={() => setSelectedFilter(filter)}
                   >
-                    {filter}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            <FlatList
-              data={filteredEmails}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => toggleAccordion(item.id)}
-                  activeOpacity={0.8}
-                >
-                  <View style={styles.emailCard}>
-                    <View style={styles.emailHeader}>
-                      <Text style={styles.emailSubject}>{item.subject}</Text>
-                      <Text style={styles.emailTime}>{item.time}</Text>
-                    </View>
                     <Text
-                      style={styles.emailContent}
-                      numberOfLines={expandedId === item.id ? 0 : 1}
+                      style={[
+                        styles.filterText,
+                        selectedFilter === filter && styles.activeFilterText,
+                      ]}
                     >
-                      {item.content}
+                      {filter}
                     </Text>
-                    <Text style={styles.emailSender}>by {item.sender}</Text>
-                    <View style={styles.buttonContainer}>
-                      <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate("Calendar")}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+
+              <FlatList
+                data={finalEmails}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => toggleAccordion(item.id)}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.emailCard}>
+                      <View style={styles.emailHeader}>
+                        <Text style={styles.emailSubject}>{item.headers.subject}</Text>
+                        <Text style={styles.emailTime}>{formatReadableDate(item.headers.date)}</Text>
+                      </View>
+                      <Text
+                        style={styles.emailContent}
+                        numberOfLines={expandedId === item.id ? 0 : 1}
                       >
-                        <Text style={styles.buttonText}>Set Reminder</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => markAsImportant(item.id)}
-                      >
-                        <Text style={styles.buttonText}>
-                          {item.important ? "Unmark" : "Mark as Important"}
-                        </Text>
-                      </TouchableOpacity>
+                        {item.body}
+                      </Text>
+                      <Text style={styles.emailSender}>by {item.headers.from}</Text>
+                      <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                          style={styles.button}
+                          onPress={() => navigation.navigate("Calendar")}
+                        >
+                          <Text style={styles.buttonText}>Set Reminder</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.button}
+                          onPress={() => markAsImportant(item.id)}
+                        >
+                          <Text style={styles.buttonText}>
+                            {item.important ? "Unmark" : "Mark as Important"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-              contentContainerStyle={styles.listContent}
-              keyboardShouldPersistTaps="handled" // Prevents keyboard from blocking interaction
-            />
-          </View>
+                  </TouchableOpacity>
+                )}
+                contentContainerStyle={styles.listContent}
+                keyboardShouldPersistTaps="handled" // Prevents keyboard from blocking interaction
+              />
+            </View>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -258,7 +316,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   emailHeader: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
   },
   emailSubject: {
