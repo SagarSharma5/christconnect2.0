@@ -19,14 +19,13 @@ const AcademicScreen = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const LOCAL_IP = "192.168.102.126"; // Replace with your actual IP
       const baseUrl =
         activeTab === "Information"
-          ? `http://${LOCAL_IP}:3000/classroom/courses/recentAnnouncements`
-          : `http://${LOCAL_IP}:3000/classroom/courses/recentCourseworks`;
+          ? `https://christconnect-backend.onrender.com/classroom/courses/recentAnnouncements`
+          : `https://christconnect-backend.onrender.com/classroom/courses/recentCourseworks`;
 
       const accessToken =
-        "ya29.a0AXeO80Ry74UaCu21ed-0GGP17QvZMRbUvUz-fslrjdMIozdBTuggcg9kO0u-5quw4nYEejunYS9T9qDTQrjj2YlDK4zsLZkqhvh7fbicw4fzm-a6SITjmLOVOF_svQ3jxWYmM0ian54RmRZuuyQ7faoDkVB1V0Ddf9_QQGosaCgYKATQSARMSFQHGX2MiIKXxwO3a_jA3JbHDPd1tnA0175";
+        "";
 
       const response = await axios.get(baseUrl, {
         headers: {

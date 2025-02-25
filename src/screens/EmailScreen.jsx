@@ -111,16 +111,15 @@ const EmailScreen = ({ navigation }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const LOCAL_IP = ""; // Replace with your actual IP
       const baseUrl =
         selectedFilter === "All"
-          ? `http://${LOCAL_IP}:3000/gmail/mails`
+          ? `https://christconnect-backend.onrender.com/gmail/mails`
           : selectedFilter === "Department" 
-          ? `http://${LOCAL_IP}:3000/gmail/department`
+          ? `https://christconnect-backend.onrender.com/gmail/department`
           : selectedFilter === "External"
-          ? `http://${LOCAL_IP}:3000/gmail/others`
+          ? `https://christconnect-backend.onrender.com/gmail/others`
           : selectedFilter === "Classroom"
-          ? `http://${LOCAL_IP}:3000/gmail/academic`
+          ? `https://christconnect-backend.onrender.com/gmail/academic`
           : ``; // firebase important mails api
 
       const accessToken = ""; // Google Access Token
