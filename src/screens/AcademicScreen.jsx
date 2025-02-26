@@ -223,7 +223,9 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     width: "90%",
-    justifyContent: "space-around",
+    justifyContent: "center",
+    // alignItems: "center",
+    alignSelf: "center",
     marginTop: 100,
     backgroundColor: "#ddd",
     borderRadius: 10,
@@ -231,14 +233,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tab: {
-    flex: 1,
+    width: "45%",
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,
     borderRadius: 8,
+    flex: 1,
+    alignSelf: "center",
   },
   activeTab: {
     backgroundColor: "#003366",
+    alignSelf: "center",
+    flex: 1
   },
   tabText: {
     fontSize: 16,

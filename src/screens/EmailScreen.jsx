@@ -122,7 +122,7 @@ const EmailScreen = ({ navigation }) => {
           ? `https://christconnect-backend.onrender.com/gmail/academic`
           : ``; // firebase important mails api
 
-      const accessToken = ""; // Google Access Token
+      const accessToken = "";
       
       const response = await axios.get(baseUrl, {
         headers: {
